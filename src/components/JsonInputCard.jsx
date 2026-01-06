@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { FiUsers, FiUserCheck, FiClipboard, FiX } from 'react-icons/fi';
+import { useState, useEffect, useRef } from 'react';
+import { FiUsers, FiUserCheck, FiClipboard, FiX, FiUpload } from 'react-icons/fi';
 import { normalizeJsonInput } from '../utils/jsonParser';
 
 /**
@@ -16,6 +16,7 @@ export default function JsonInputCard({
 }) {
   const [localError, setLocalError] = useState(null);
   const [isValidating, setIsValidating] = useState(false);
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
     // Debounce validation
@@ -53,6 +54,50 @@ export default function JsonInputCard({
     onChange('');
   };
 
+  const handleFileUpload = (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    // Check if file is JSON
+    if (!file.name.toLowerCase().endsWith('.json') && !file.type.includes('json')) {
+      setLocalError('Please upload a JSON file (.json) ⚠️');
+      // Reset file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const content = e.target?.result;
+        if (typeof content === 'string') {
+          onChange(content);
+        }
+      } catch (err) {
+        setLocalError(`Failed to read file: ${err.message} ⚠️`);
+      }
+      // Reset file input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    };
+
+    reader.onerror = () => {
+      setLocalError('Failed to read file ⚠️');
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    };
+
+    reader.readAsText(file);
+  };
+
+  const handleUploadClick = () => {
+    fileInputRef.current?.click();
+  };
+
   return (
     <div className="card bg-base-200 shadow-md rounded-xl p-4 md:p-6">
       <div className="flex items-center gap-3 mb-4">
@@ -70,6 +115,15 @@ export default function JsonInputCard({
           onChange={(e) => onChange(e.target.value)}
         />
         
+        {/* Hidden file input */}
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".json,application/json"
+          onChange={handleFileUpload}
+          className="hidden"
+        />
+        
         {/* Action Buttons */}
         <div className="flex gap-2 mt-3">
           <button
@@ -79,6 +133,14 @@ export default function JsonInputCard({
           >
             <FiClipboard className="text-sm" />
             Paste
+          </button>
+          <button
+            onClick={handleUploadClick}
+            className="btn btn-sm btn-outline btn-primary rounded-xl flex-1 transition-all duration-200 hover:scale-105"
+            type="button"
+          >
+            <FiUpload className="text-sm" />
+            Upload JSON
           </button>
           <button
             onClick={handleClear}
