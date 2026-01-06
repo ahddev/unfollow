@@ -18,7 +18,7 @@ function App() {
   const [hasRunComparison, setHasRunComparison] = useState(false);
   const [magicPhrase, setMagicPhrase] = useState('');
   
-  const REQUIRED_PHRASE = 'i am obsessed with my handsome Ahed';
+  const REQUIRED_PHRASE = 'mira is obsessed with the handsome Ahed';
 
   // Load persisted data on mount
   useEffect(() => {
@@ -121,6 +121,12 @@ function App() {
     });
   }, []);
 
+  const handleClearResults = useCallback(() => {
+    setResults([]);
+    setHasRunComparison(false);
+    saveResults([]);
+  }, []);
+
   const canCompare = followersValid && followingValid && followersJson.trim() && followingJson.trim();
 
   return (
@@ -176,7 +182,7 @@ function App() {
             </label>
             <input
               type="text"
-              placeholder="I am obsessed with my handsome Ahed"
+              placeholder="mira is obsessed with the handsome Ahed"
               value={magicPhrase}
               onChange={(e) => setMagicPhrase(e.target.value)}
               className={`input input-bordered rounded-xl transition-all duration-200 ${
@@ -233,6 +239,7 @@ function App() {
             results={results}
             isLoading={isLoading}
             onRemoveUser={handleRemoveUser}
+            onClearResults={handleClearResults}
           />
         )}
       </div>
