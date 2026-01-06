@@ -61,4 +61,3 @@ src/
 ## License
 
 MIT
-
