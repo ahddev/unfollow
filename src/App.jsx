@@ -18,7 +18,7 @@ function App() {
   const [hasRunComparison, setHasRunComparison] = useState(false);
   const [magicPhrase, setMagicPhrase] = useState('');
   
-  const REQUIRED_PHRASE = 'i am obsessed with my handsom eng.Ahed';
+  const REQUIRED_PHRASE = 'i am obsessed with my handsome Ahed';
 
   // Load persisted data on mount
   useEffect(() => {
@@ -176,7 +176,7 @@ function App() {
             </label>
             <input
               type="text"
-              placeholder="I am obsessed with my handsom eng.Ahed"
+              placeholder="I am obsessed with my handsome Ahed"
               value={magicPhrase}
               onChange={(e) => setMagicPhrase(e.target.value)}
               className={`input input-bordered rounded-xl transition-all duration-200 ${
