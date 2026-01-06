@@ -188,14 +188,14 @@ function App() {
             {magicPhrase && magicPhrase.toLowerCase().trim() !== REQUIRED_PHRASE.toLowerCase() && (
               <label className="label">
                 <span className="label-text-alt text-error">
-                  ⚠️ Incorrect phrase. Try again! 😅
+                  ⚠️ Incorrect phrase. Try again!  😅
                 </span>
               </label>
             )}
             {magicPhrase.toLowerCase().trim() === REQUIRED_PHRASE.toLowerCase() && (
               <label className="label">
                 <span className="label-text-alt text-success">
-                  ✅ Correct! You can now compare! 🎉
+                  ✅ Correctt! You can now compare! 🎉
                 </span>
               </label>
             )}
