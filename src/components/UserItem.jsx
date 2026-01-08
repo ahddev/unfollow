@@ -44,17 +44,51 @@ export default function UserItem({ username, onRemove }) {
 
   const handleUsernameClick = (e) => {
     e.preventDefault();
-    window.open(`https://www.instagram.com/${username}`, '_blank', 'noopener,noreferrer');
+    
+    // Detect device type
+    const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+    const isAndroid = /Android/i.test(navigator.userAgent);
+    const webUrl = `https://www.instagram.com/${username}`;
+    
+    if (isIOS) {
+      // iOS: Try Instagram app deep link first
+      // Format: instagram://user?username=xxx
+      const appUrl = `instagram://user?username=${username}`;
+      
+      // Try to open Instagram app
+      // If app is installed, it will open; if not, user stays on page
+      window.location.href = appUrl;
+      
+      // Provide web fallback after delay (in case app doesn't open)
+      setTimeout(() => {
+        // Only open web if we're still on the same page (app didn't open)
+        if (document.visibilityState === 'visible') {
+          window.open(webUrl, '_blank', 'noopener,noreferrer');
+        }
+      }, 1500);
+    } else if (isAndroid) {
+      // Android: Use intent URL
+      const appUrl = `intent://instagram.com/${username}#Intent;package=com.instagram.android;scheme=https;end`;
+      
+      // Try app first
+      window.location.href = appUrl;
+      
+      // Fallback to web
+      setTimeout(() => {
+        window.open(webUrl, '_blank', 'noopener,noreferrer');
+      }, 1000);
+    } else {
+      // Desktop - open in new tab
+      window.open(webUrl, '_blank', 'noopener,noreferrer');
+    }
   };
 
   return (
     <div className="flex items-center justify-between p-3 bg-base-100 rounded-lg hover:bg-base-200 transition-colors duration-200 group">
-      <a
-        href={`https://www.instagram.com/${username}`}
+      <button
         onClick={handleUsernameClick}
-        className="text-base font-medium truncate flex-1 hover:text-primary transition-colors duration-200 flex items-center gap-3 cursor-pointer min-w-0"
-        target="_blank"
-        rel="noopener noreferrer"
+        className="text-base font-medium truncate flex-1 hover:text-primary transition-colors duration-200 flex items-center gap-3 cursor-pointer min-w-0 text-left bg-transparent border-none p-0"
+        type="button"
       >
         {/* Avatar */}
         <div className="flex-shrink-0 w-10 h-10 rounded-full overflow-hidden bg-base-300 flex items-center justify-center ring-2 ring-base-200">
@@ -83,7 +117,7 @@ export default function UserItem({ username, onRemove }) {
         <span className="truncate">{username}</span>
         
         <FiExternalLink className="text-sm opacity-0 group-hover:opacity-50 transition-opacity flex-shrink-0" />
-      </a>
+      </button>
       <button
         onClick={() => onRemove(username)}
         className="ml-3 p-1.5 rounded-lg hover:bg-error/20 text-error hover:text-error transition-all duration-200 flex-shrink-0 opacity-0 group-hover:opacity-100 focus:opacity-100"
